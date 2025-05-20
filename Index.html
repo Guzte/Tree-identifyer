@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tree Identifier App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8f5;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #2a5d34;
+    }
+    input[type="file"] {
+      margin: 15px 0;
+    }
+    #preview {
+      max-width: 300px;
+      display: none;
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background: #fff;
+      display: none;
+      border-radius: 6px;
+    }
+    #loading {
+      display: none;
+      margin-top: 12px;
+      color: #2a5d34;
+      font-weight: bold;
+    }
+    #error {
+      color: #c0392b;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>LeafSnap Pro</h1>
+  <p>Upload a leaf or tree photo for identification.</p>
+
+  <input type="file" accept="image/*" id="imageInput" />
+  <br />
+  <img id="preview" src="#" alt="Preview" />
+
+  <div id="loading">Identifying tree... Please wait.</div>
+  <div id="error"></div>
+
+  <div id="result">
+    <h2>Tree Identification Result</h2>
+    <p><strong>Common Name:</strong> <span id="commonName"></span></p>
+    <p><strong>Scientific Name:</strong> <span id="scientificName"></span></p>
+    <p><strong>Info:</strong> <span id="info"></span></p>
+  </div>
+
+  <script>
+    const input = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const result = document.getElementById("result");
+    const loading = document.getElementById("loading");
+    const errorDiv = document.getElementById("error");
+    const commonNameSpan = document.getElementById("commonName");
+    const scientificNameSpan = document.getElementById("scientificName");
+    const infoSpan = document.getElementById("info");
+
+    // Simulate async identification (replace with real API call)
+    function identifyTree(imageDataUrl) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          // Placeholder for API response
+          resolve({
+            commonName: "Oak",
+            scientificName: "Quercus robur",
+            info: "Placeholder result. API connection pending."
+          });
+        }, 1500);
+      });
+    }
+
+    function showError(message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+      result.style.display = "none";
+      loading.style.display = "none";
+      preview.style.display = "none";
+    }
+
+    input.addEventListener("change", function () {
+      errorDiv.style.display = "none";
+      result.style.display = "none";
+      preview.style.display = "none";
+
+      const file = this.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        showError("Please upload a valid image file.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+        loading.style.display = "block";
+
+        try {
+          // Simulate identification delay
+          const treeData = await identifyTree(e.target.result);
+
+          commonNameSpan.textContent = treeData.commonName;
+          scientificNameSpan.textContent = treeData.scientificName;
+          infoSpan.textContent = treeData.info;
+
+          result.style.display = "block";
+        } catch (err) {
+          showError("An error occurred during identification.");
+        } finally {
+          loading.style.display = "none";
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // TODO: Replace identifyTree with real API call to Pl@ntNet or Plant.id via backend.
+  </script>
+</body>
+         </html> 
